@@ -5,8 +5,8 @@ Protocol.
 
 # Install
 
-To use this library you must download and install the Arduino IDE (or
-GCC AVR toolchain) and Cosa.
+To use this library you must download and install the [Arduino IDE] (http://www.arduino.cc/en/Main/Software) (or
+GCC AVR toolchain) and [Cosa] (https://github.com/mikaelpatel/Cosa).
 
 Download and unzip the Cosa-MQTT library into your sketchbook
 libraries directory. Rename from Cosa-MQTT to MQTT.

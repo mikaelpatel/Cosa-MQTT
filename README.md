@@ -11,7 +11,7 @@ GCC AVR toolchain) and [Cosa] (https://github.com/mikaelpatel/Cosa).
 Download and unzip the Cosa-MQTT library into your sketchbook
 libraries directory. Rename from Cosa-MQTT-master to MQTT.
 
-The the MQTT library and examples should be found in the Arduino IDE
+The MQTT library and examples should be found in the Arduino IDE
 File>Sketchbook menu. Open the CosaMQTTclient example sketch. Select
 the Cosa core by selecting one of the Cosa boards in the Tools>Board
 menu.

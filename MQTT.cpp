@@ -75,7 +75,7 @@ MQTT::Client::read(void* buf, size_t count, uint32_t ms)
   while (((res = m_sock->available()) == 0) &&
 	 ((ms == 0L) || (Watchdog::millis() - start < ms)))
     yield();
-  if (res == 0) return (-2);
+  if (UNLIKELY(res == 0)) return (-2);
   return (m_sock->read(buf, count));
 }
 
@@ -88,7 +88,7 @@ MQTT::Client::flush()
 bool
 MQTT::Client::begin(Socket* sock)
 {
-  if (sock == NULL) return (false);
+  if (UNLIKELY(sock == NULL)) return (false);
   m_sock = sock;
   return (true);
 }
@@ -96,7 +96,7 @@ MQTT::Client::begin(Socket* sock)
 bool
 MQTT::Client::end()
 {
-  if (m_sock == NULL) return (false);
+  if (UNLIKELY(m_sock == NULL)) return (false);
   m_sock->close();
   m_sock = NULL;
   return (true);
@@ -114,10 +114,10 @@ MQTT::Client::connect(const char* hostname,
 
   // Connect to the server. Check for timeout
   int res = m_sock->connect(hostname, PORT);
-  if (res != 0) return (-1);
+  if (UNLIKELY(res != 0)) return (-1);
   while ((res = m_sock->is_connected()) == 0) yield();
-  if (res == 0) res = -2;
-  if (res < 0) return (res);
+  if (UNLIKELY(res == 0)) res = -2;
+  if (UNLIKELY(res < 0)) return (res);
 
   // Calculate length of variable payload
   size_t length = sizeof(PROTOCOL) + sizeof(flag) + sizeof(keep_alive);
@@ -215,7 +215,7 @@ MQTT::Client::publish(str_P topic, const void* buf, size_t count,
   if (qos > FIRE_AND_FORGET) write(&id, sizeof(id));
   if (progmem) write_P(buf, count); else write(buf, count);
   int res = flush();
-  if (res < 0) return (-1);
+  if (UNLIKELY(res < 0)) return (-1);
 
   // Wait for response. Depends on requested quality of service
   struct {
@@ -230,23 +230,23 @@ MQTT::Client::publish(str_P topic, const void* buf, size_t count,
     return (0);
   case ACKNOWLEDGED_DELIVERY:
     res = read(&response, sizeof(response));
-    if (res != sizeof(response)) return (-2);
+    if (UNLIKELY(res != sizeof(response))) return (-2);
     if ((response.cmd != PUBACK)
 	|| (response.length != sizeof(response.id))
 	|| (response.id != id)) return (-3);
     return (0);
   case ASSURED_DELIVERY:
     res = read(&response, sizeof(response));
-    if (res != sizeof(response)) return (-2);
+    if (UNLIKELY(res != sizeof(response))) return (-2);
     if ((response.cmd != PUBREC)
 	|| (response.length != sizeof(response.id))
 	|| (response.id != id)) return (-3);
     response.cmd = PUBREL;
     write(&response, sizeof(response));
     res = flush();
-    if (res < 0) return (-1);
+    if (UNLIKELY(res < 0)) return (-1);
     res = read(&response, sizeof(response));
-    if (res != sizeof(response)) return (-2);
+    if (UNLIKELY(res != sizeof(response))) return (-2);
     if ((response.cmd != PUBCOMP)
 	|| (response.length != sizeof(response.id))
 	|| (response.id != id)) return (-4);
@@ -278,7 +278,7 @@ MQTT::Client::subscribe(str_P topic, QoS_t qos)
     uint8_t qos;
   } response;
   res = read(&response, sizeof(response));
-  if (res != sizeof(response)) return (-2);
+  if (UNLIKELY(res != sizeof(response))) return (-2);
   if ((response.cmd != SUBACK)
       || (response.length != 3)
       || (response.id != id)
@@ -299,7 +299,7 @@ MQTT::Client::unsubscribe(str_P topic)
   write(UNSUBSCRIBE, length, id);
   puts(topic);
   int res = flush();
-  if (res < 0) return (-1);
+  if (UNLIKELY(res < 0)) return (-1);
 
   // Wait for response; UNSUBACK or timeout
   struct {
@@ -308,7 +308,7 @@ MQTT::Client::unsubscribe(str_P topic)
     uint16_t id;
   } response;
   res = read(&response, sizeof(response));
-  if (res != sizeof(response)) return (-2);
+  if (UNLIKELY(res != sizeof(response))) return (-2);
   if ((response.cmd != UNSUBACK)
       || (response.length != 2)
       || (response.id != id)) return (-3);
@@ -325,7 +325,7 @@ MQTT::Client::service(uint32_t ms)
 
   // Read request (publish). Check for timeout
   int res = read(&request, sizeof(request), ms);
-  if (res != sizeof(request)) return (res);
+  if (UNLIKELY(res != sizeof(request))) return (res);
   uint16_t length = request.length;
   if (request.length > 128) {
     uint8_t msb;
@@ -340,11 +340,11 @@ MQTT::Client::service(uint32_t ms)
   // Read topic length and string
   uint16_t count;
   res = read(&count, sizeof(count));
-  if (res != sizeof(count)) return (-2);
+  if (UNLIKELY(res != sizeof(count))) return (-2);
   count = ntoh((int16_t) count);
   char topic[count + 1];
   res = read(topic, count);
-  if (res != (int) count) return (-2);
+  if (UNLIKELY(res != (int) count)) return (-2);
   topic[count] = 0;
   length -= count + sizeof(count);
 
@@ -359,7 +359,7 @@ MQTT::Client::service(uint32_t ms)
   // Read payload and call on_publish handler
   uint8_t payload[length + 1];
   res = read(payload, length);
-  if (res != (int) length) return (-2);
+  if (UNLIKELY(res != (int) length)) return (-2);
   payload[length] = 0;
 
   // Write response message(s)
@@ -379,23 +379,23 @@ MQTT::Client::service(uint32_t ms)
     response.cmd = PUBACK;
     res = write(&response, sizeof(response));
     res = flush();
-    if (res < 0) return (-3);
+    if (UNLIKELY(res < 0)) return (-3);
     on_publish(topic, payload, length);
     return (0);
   case ASSURED_DELIVERY:
     response.cmd = PUBREC;
     res = write(&response, sizeof(response));
     res = flush();
-    if (res < 0) return (-4);
+    if (UNLIKELY(res < 0)) return (-4);
     res = read(&response, sizeof(response));
-    if (res != sizeof(response)) return (-2);
+    if (UNLIKELY(res != sizeof(response))) return (-2);
     if ((response.cmd != PUBREL)
 	|| (response.length != sizeof(response.id))
 	|| (response.id != id)) return (-5);
     response.cmd = PUBCOMP;
     write(&response, sizeof(response));
     res = flush();
-    if (res < 0) return (-6);
+    if (UNLIKELY(res < 0)) return (-6);
     on_publish(topic, payload, length);
     return (0);
   }

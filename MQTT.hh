@@ -99,8 +99,9 @@ public:
      * @param[in] identifier for client (program memory string).
      * @param[in] keep_alive time limit between messages (Default 600).
      * @param[in] flag connect flags (Default none).
-     * @param[in] will topic (Optional program memory string).
+     * @param[in] topic will (Optional program memory string).
      * @param[in] message will (Optional program memory string).
+     * @param[in] qos will (Optional QoS number).
      * @param[in] user name (Optional program memory string).
      * @param[in] password string (Optional program memory string).
      * @return zero if successful otherwise negative error code.

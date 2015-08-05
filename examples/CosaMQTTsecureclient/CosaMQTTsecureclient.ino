@@ -87,6 +87,13 @@ public:
   virtual void on_publish(char* topic, void* buf, size_t count);
 };
 
+/*
+ * Parse incomming topic/message.
+ * The following topics will be parsed with "ON", "1", "OFF"
+ * and "0" beeing valid messages.
+ * nexa/switch/[device]
+ * nexa/group/[group]
+ */
 void
 MQTTClient::on_publish(char* topic, void* buf, size_t count)
 {
@@ -125,10 +132,10 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
   } // end parsing NEXA Switches
   
   // Parse NEXA Groups
-  key = toparse.substring(0, 12);
+  key = toparse.substring(0, 11);
   if (key.equals("nexa/group/"))
   {
-    String val(toparse.substring(12, toparse.length()));
+    String val(toparse.substring(11, toparse.length()));
     uint8_t len = val.length();
     uint16_t group = 0;
     for(int i=0; i<len; i++){
@@ -143,8 +150,6 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
     {
       trace << PSTR("  NEXA Group ") << group << PSTR(" turned OFF") << endl;
     }
-    
-    return;
   } // end parsing NEXA Groups
 }
 
@@ -206,7 +211,7 @@ void mqttStop()
   ASSERT(!client.disconnect());
   ASSERT(client.end());
 
-  // Client has started
+  // Client has stoped
   trace << PSTR("Cosa-MQTT secure client: stoped") << endl;
 }
 

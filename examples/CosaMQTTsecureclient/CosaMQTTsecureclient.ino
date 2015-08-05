@@ -180,9 +180,10 @@ void loop()
     TRACE(service = client.service());
   }
   
-  // Restart the client
+  // Restart the client; after client is stoped wait a few ms before starting again
   trace << PSTR("Cosa-MQTT secure client: restarting") << endl;
   mqttStop();
+  delay(10);
   mqttStart();
 }
 

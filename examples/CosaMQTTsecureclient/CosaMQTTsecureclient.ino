@@ -72,7 +72,7 @@ W5100 ethernet(mac);
 static const char CLIENT[] __PROGMEM = "Cosa-MQTT secure client";       // Client name
 static const char WILL_TOPIC[] __PROGMEM = "node/gone-offline";         // Last will topic
 static const char WILL_MSG[] __PROGMEM = "Cosa-MQTT secure client";     // Last will message
-static const uint16_t will_qos = 0;                                     // Last will QoS
+static const uint16_t WILL_QOS = 0;                                     // Last will QoS
 static const char USER[] __PROGMEM = "Cosa-MQTT";                       // Username for connection to broker
 static const char PASSWD[] __PROGMEM = "mypwd";                         // Password for connection to broker
 static const uint8_t flag = MQTT::Client::WILL_FLAG |                   // Connection flags; combine flag for will, username and password
@@ -185,7 +185,7 @@ void mqttStart()
 {
   // Start MQTT client with socket and connect to server using will, username and password
   ASSERT(client.begin(ethernet.socket(Socket::TCP)));
-  ASSERT(!client.connect(BROKER, CLIENT, 600, flag, WILL_TOPIC, WILL_MSG, will_qos, USER, PASSWD));
+  ASSERT(!client.connect(BROKER, CLIENT, 600, flag, WILL_TOPIC, WILL_MSG, WILL_QOS, USER, PASSWD));
   
   // Publish data about the client
   client.publish_P(PSTR("cosamqttsecureclient/client"), CLIENT, sizeof(CLIENT));

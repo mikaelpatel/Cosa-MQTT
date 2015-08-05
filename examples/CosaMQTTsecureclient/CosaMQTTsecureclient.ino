@@ -91,6 +91,7 @@ public:
  * and "0" beeing valid messages.
  * nexa/switch/[device]
  * nexa/group/[group]
+ * where [device] and [group] beeing numbers between 0 and 99.
  */
 void
 MQTTClient::on_publish(char* topic, void* buf, size_t count)

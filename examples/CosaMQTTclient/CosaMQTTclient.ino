@@ -1,5 +1,5 @@
 /**
- * @file CosaMQTT.ino
+ * @file CosaMQTTclient.ino
  * @version 1.0
  *
  * @section License

@@ -58,8 +58,6 @@
 #include "Cosa/IOStream/Driver/UART.hh"
 #include "Cosa/String.hh"
 
-#define DEVMODE
-
 // W5100 Ethernet Controller with MAC-address
 static const uint8_t mac[6] __PROGMEM = { 0xde, 0xad, 0xbe, 0xef, 0xfe, 0xed };
 W5100 ethernet(mac);

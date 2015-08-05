@@ -175,10 +175,11 @@ void loop()
   trace << PSTR("Service incomming messages") << endl;
 
   int service = 0;
-  while (service > -1 )
+  do
   {
     TRACE(service = client.service());
   }
+  while (service > -1 );
   
   // Restart the client; after client is stoped wait a few ms before starting again
   trace << PSTR("Cosa-MQTT secure client: restarting") << endl;

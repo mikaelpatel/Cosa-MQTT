@@ -102,10 +102,10 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
   #endif
   
   // Parse NEXA Switches
-  String key(toparse.substring(0, 24));
+  String key(toparse.substring(0, 12));
   if (key.equals("nexa/switch/"))
   {
-    String val(toparse.substring(24, toparse.length()));
+    String val(toparse.substring(12, toparse.length()));
     uint8_t len = val.length();
     uint16_t device = 0;
     for(int i=0; i<len; i++){
@@ -125,10 +125,10 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
   } // end parsing NEXA Switches
   
   // Parse NEXA Groups
-  key = toparse.substring(0, 23);
+  key = toparse.substring(0, 12);
   if (key.equals("nexa/group/"))
   {
-    String val(toparse.substring(23, toparse.length()));
+    String val(toparse.substring(12, toparse.length()));
     uint8_t len = val.length();
     uint16_t group = 0;
     for(int i=0; i<len; i++){

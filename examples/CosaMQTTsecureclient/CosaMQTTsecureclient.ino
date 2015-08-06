@@ -80,7 +80,8 @@ static const uint8_t flag = MQTT::Client::WILL_FLAG |                   // Conne
 /*
  * MQTT client; Parses incoming topic/message
  */
-class MQTTClient : public MQTT::Client {
+class MQTTClient : public MQTT::Client
+{
 public:
   virtual void on_publish(char* topic, void* buf, size_t count);
 };
@@ -100,12 +101,10 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
   String partition;
   String payload((char*) buf);
   
-  #if defined(DEVMODE)
   // Print the topic and value to trace stream
   trace << PSTR("on_publish::count = ") << count << endl;
   trace << PSTR("  topic = ") << topic << endl;
   trace << PSTR("  payload = ") << payload << endl;
-  #endif
   
   // Parse NEXA Switches
   String key(toparse.substring(0, 12));
@@ -114,7 +113,8 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
     String val(toparse.substring(12, toparse.length()));
     uint8_t len = val.length();
     uint16_t device = 0;
-    for(int i=0; i<len; i++){
+    for(int i=0; i<len; i++)
+    {
       device = device * 10 + ( val[i] - '0' );
     }
     
@@ -137,7 +137,8 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
     String val(toparse.substring(11, toparse.length()));
     uint8_t len = val.length();
     uint16_t group = 0;
-    for(int i=0; i<len; i++){
+    for(int i=0; i<len; i++)
+    {
       group = group * 10 + ( val[i] - '0' );
     }
     

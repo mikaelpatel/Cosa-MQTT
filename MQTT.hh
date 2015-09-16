@@ -199,7 +199,7 @@ public:
     int service(uint32_t ms = 0L);
 
     /**
-     * @override MQTT::Client
+     * @override{MQTT::Client}
      * Called by service when received a publish message.
      * @param[in] topic string.
      * @param[in] buf buffer with topic value.

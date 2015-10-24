@@ -48,7 +48,7 @@
 #include <W5100.h>
 #include <MQTT.h>
 
-#include "Cosa/RTC.hh"
+#include "Cosa/RTT.hh"
 #include "Cosa/Watchdog.hh"
 #include "Cosa/IOBuffer.hh"
 
@@ -71,9 +71,9 @@ W5100 ethernet(mac);
 
 void setup()
 {
-  // Start watchdog and real-time clock (timer)
+  // Start watchdog and real-time timer
   Watchdog::begin();
-  RTC::begin();
+  RTT::begin();
 
   // Start ethernet controller and request network address for hostname
   ethernet.begin_P(CLIENT);

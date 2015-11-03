@@ -90,8 +90,8 @@ void loop()
 {
   // Request a conversion and read the humidity and temperature
   sensor.sample();
-  int16_t temperature = sensor.get_temperature();
-  int16_t humidity = sensor.get_humidity();
+  int16_t temperature = sensor.temperature();
+  int16_t humidity = sensor.humidity();
 
   // Use an iobuffer and iostream to convert humidity/temperature to string
   IOBuffer<16> buf;

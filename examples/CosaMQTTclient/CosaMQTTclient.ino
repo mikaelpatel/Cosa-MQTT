@@ -35,7 +35,9 @@
 
 #include <DHCP.h>
 #include <DNS.h>
+#include <W5X00.h>
 #include <W5100.h>
+// #include <W5200.h>
 #include <MQTT.h>
 
 #include "Cosa/Watchdog.hh"
@@ -74,7 +76,7 @@ MQTTClient client;
 // W5100 Ethernet Controller with MAC-address
 const uint8_t mac[6] __PROGMEM = { 0xde, 0xad, 0xbe, 0xef, 0xfe, 0xed };
 W5100 ethernet(mac);
-
+// W5200 ethernet(mac);
 
 void setup()
 {

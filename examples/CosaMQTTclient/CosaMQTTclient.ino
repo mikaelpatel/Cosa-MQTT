@@ -1,5 +1,5 @@
 /**
- * @file CosaMQTT.ino
+ * @file CosaMQTTclient.ino
  * @version 1.0
  *
  * @section License
@@ -17,6 +17,9 @@
  *
  * @section Description
  * W5100 Ethernet Controller device driver example code; MQTT client.
+ * Connection to broker is made with or without username/password
+ * depending of the precence of a definition of the compilation
+ * keyword SECURECONNECT.
  *
  * @section Circuit
  * This sketch is designed for the Ethernet Shield.
@@ -73,6 +76,19 @@ MQTTClient::on_publish(char* topic, void* buf, size_t count)
 const char CLIENT[] __PROGMEM = "CosaMQTTclient";
 MQTTClient client;
 
+// MQTT client secure connect configurations (optional; undefine SECURECONNECT if it should not be used)
+#define SECURECONNECT
+#ifdef SECURECONNECT
+static const char WILL_TOPIC[] __PROGMEM = "node/gone-offline";    // Last will topic
+static const char WILL_MSG[] __PROGMEM = "CosaMQTTclient";         // Last will message
+static const uint16_t WILL_QOS = 0;                                // Last will QoS
+static const char USER[] __PROGMEM = "myuser";                     // Username for connection to broker
+static const char PASSWD[] __PROGMEM = "mypwd";                    // Password for connection to broker
+static const uint8_t FLAG = MQTT::Client::WILL_FLAG |              // Connection flags; combine flag for will, username and password
+                            MQTT::Client::USER_NAME_FLAG |
+                            MQTT::Client::PASSWORD_FLAG;
+#endif
+
 // W5100 Ethernet Controller with MAC-address
 const uint8_t mac[6] __PROGMEM = { 0xde, 0xad, 0xbe, 0xef, 0xfe, 0xed };
 W5100 ethernet(mac);
@@ -89,7 +105,11 @@ void setup()
 
   // Start MQTT client with socket and connect to server
   ASSERT(client.begin(ethernet.socket(Socket::TCP)));
+  #ifdef SECURECONNECT
+  ASSERT(!client.connect(SERVER, CLIENT, 600, FLAG, WILL_TOPIC, WILL_MSG, WILL_QOS, USER, PASSWD));
+  #else
   ASSERT(!client.connect(SERVER, CLIENT));
+  #endif
 
   // Publish data with the different quality of service levels
   TRACE(client.publish_P(PSTR("public/cosa/client"), CLIENT, sizeof(CLIENT)));
